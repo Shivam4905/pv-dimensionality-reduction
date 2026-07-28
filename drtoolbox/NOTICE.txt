@@ -1,0 +1,30 @@
+THIRD-PARTY COMPONENT — Matlab Toolbox for Dimensionality Reduction (drtoolbox)
+================================================================================
+
+This directory contains the Matlab Toolbox for Dimensionality Reduction,
+version 0.8b, written by Laurens van der Maaten (Delft University of
+Technology). It is redistributed here, unmodified, so that the project is
+self-contained (the user only has to run main.m).
+
+It is NOT covered by the MIT license of the surrounding project. Each toolbox
+file carries its own header stating the terms:
+
+    "You are free to use, change, or redistribute this code in any way you
+     want for non-commercial purposes. However, it is appreciated if you
+     maintain the name of the original author."
+
+In other words, the toolbox is provided for NON-COMMERCIAL use only, with
+attribution to the original author. Anyone intending a commercial use must
+refer to the toolbox's original terms and contact its author.
+
+Original author and references
+------------------------------
+  L. van der Maaten, Matlab Toolbox for Dimensionality Reduction,
+  Delft University of Technology, 2007-2014.
+  https://lvdmaaten.github.io/drtoolbox/
+
+  L. van der Maaten, E. O. Postma, J. van den Herik,
+  "Dimensionality Reduction: A Comparative Review", 2008.
+
+Only the reference implementation is used here, through the standard
+compute_mapping / out_of_sample entry points, with default method parameters.

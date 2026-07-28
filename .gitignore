@@ -1,0 +1,16 @@
+# Sorties de run (regenerees par main.m)
+Results_wrapper.csv
+Results_wrapper.mat
+Results_filter.csv
+Results_filter.mat
+
+# Fichiers temporaires MATLAB
+*.asv
+*.autosave
+slprj/
+octave-workspace
+
+# Journaux / divers
+*.log
+.DS_Store
+Thumbs.db

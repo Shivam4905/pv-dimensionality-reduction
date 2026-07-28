@@ -61,6 +61,8 @@ P.ridge       = 0;             % regularisation Tikhonov de l'ELM (0 = pinv)
 P.filter_alpha = 0.6;          % poids local (trustworthiness) dans S(d)
 P.filter_k     = 10;           % voisins pour la trustworthiness
 P.filter_q     = 0.95;         % seuil : plus petite d telle que S(d) >= q*max S
+P.filter_eval  = true;         % evalue aussi la prevision (ELM) a d*_F : la table
+                               % filter devient comparable a la table wrapper
 
 P.run_wrapper = true;
 P.run_filter  = true;

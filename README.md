@@ -67,7 +67,8 @@ Two CSV/MAT tables, one per diagnostic, sharing the exact same baseline rows:
 - `Results_wrapper.csv` — for every method, the reduced dimension that minimises
   the forecasting error (`NICE_Sigma`), plus a linear counterpart (`*_AR`);
 - `Results_filter.csv` — for every method, the dimension selected on the
-  geometric score alone.
+  geometric score alone (and, for comparison, the forecast that this
+  geometrically-chosen dimension produces with the same ELM).
 
 Both tables are sorted by `N_params`, so you can literally scan down the column
 and watch the error move as the model grows or shrinks. Each row carries:
@@ -126,6 +127,9 @@ orchestrates. For each horizon:
    do **not** take its maximum; we keep the *smallest* dimension that reaches a
    fraction `q` of the achievable score — a simple, transparent parsimony rule.
    The full `S(d)` curve is saved as well, in case a Pareto plot is wanted later.
+   The forecast at that single geometrically-chosen dimension is then evaluated
+   with the same ELM (`P.filter_eval`), so the filter table can be read next to
+   the wrapper table on the same error scale.
 
 Two notes worth keeping in mind:
 

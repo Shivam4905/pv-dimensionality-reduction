@@ -75,9 +75,27 @@ function [F, curves] = DR_filter(D, EMB, P)
         Sstar = Srow(jsel);
 
         nP = nh * (dstar + n_temp) + 2 * nh;   % empreinte structurelle a d*_F
+
+        % Prevision a la SEULE dimension d*_F (meme operateur ELM que le
+        % wrapper), pour que la table filter soit comparable a la table wrapper.
+        % La selection de la dimension reste purement geometrique ; on ne fait
+        % qu'evaluer, on ne re-selectionne pas sur l'erreur.
+        rmse=NaN; nrmse=NaN; r2=NaN; n1=NaN; n2=NaN; n3=NaN; nS=NaN;
+        if P.filter_eval
+            [Ytr_d, Yte_d, ok] = emb_slice(E, jsel);
+            if ok
+                Ztr = [Ytr_d, D.TEMP_train];
+                Zte = [Yte_d, D.TEMP_test];
+                [beta, IW, Bias] = elm_train(Ztr, D.y_train, nh, P.N_ELM_candidates, P.ridge);
+                yhat = 1 ./ (1 + exp(-(Zte * IW' + Bias'))) * beta;
+                [rmse, nrmse, r2, n1, n2, n3, nS] = ...
+                    eval_metrics(D.y_test, yhat, D.MAE_P, D.RMSE_P, D.RMCE_P, D.mean_y_test);
+            end
+        end
+
         F  = [F; result_row(method, D.LB_days, D.FH_hours, dstar, nP, ...
                   100*(1 - nP/D.nParams_full), Sstar, ...
-                  NaN, NaN, NaN, NaN, NaN, NaN, NaN)];   % pas de prevision (geometrique)
+                  rmse, nrmse, r2, n1, n2, n3, nS)];
 
         curves(end+1) = struct('method', method, 'dims', tdims, 'S', Srow, 'tau', tau); %#ok<AGROW>
     end

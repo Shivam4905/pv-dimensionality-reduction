@@ -19,12 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
---------------------------------------------------------------------------------
-NOTE ON THIRD-PARTY CODE
-
-The MIT license above covers the code written for this project (main.m and the
-accompanying functions). It does NOT cover the bundled Matlab Toolbox for
-Dimensionality Reduction, located in drtoolbox/, which is distributed under its
-own, more restrictive (non-commercial) license by Laurens van der Maaten.
-See drtoolbox/NOTICE.txt and the headers of the toolbox files for details.

